@@ -1,64 +1,131 @@
 package ml;
 
+import parsing.DataParser;
+
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class CrossValidation
 {
-    /*private List<DataPoint> points = new ArrayList<DataPoint>();
+    private List<DataPoint> points = new ArrayList<DataPoint>();
     private List<DataPoint> trainingPoints = new ArrayList<DataPoint>();
     private List<DataPoint> testPoints = new ArrayList<DataPoint>();
 
-    public void getTestAndTrainingData (File file) throws FileNotFoundException {
+    private int truePositive=0;
+    private int falsePositive=0;
+    private int trueNegative=0;
+    private int falseNegative=0;
 
-        Scanner cin = new Scanner(file);
+    private double accuracy;
+    private double recall;
+    private double precision;
+    private double fScore;
 
-        while (cin.hasNextLine())
-        {
-            String temp = cin.nextLine();
-
-            Scanner tempScanner = new Scanner(temp).useDelimiter(",");
-
-            DataPoint dataPoint = new DataPoint(tempScanner.nextDouble(),
-                    tempScanner.nextDouble(),tempScanner.nextDouble(),tempScanner.nextDouble(),
-                    tempScanner.next());
-            points.add(dataPoint);
-
-            tempScanner.close();
+    public void doCrossValidation () throws FileNotFoundException
+    {
+        DataParser dataParser = new DataParser();
+        try {
+            dataParser.parseTrainingData();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
-        cin.close();
 
-        for(int i=0; i<points.size()/10; i++)
+        points = dataParser.getAllPoints();
+
+        //randomize
+        Collections.shuffle(points);
+
+        for (int i=0; i<10; i++)
         {
-            Random rand = new Random();
-            int temp = rand.nextInt(points.size());
-            if(points.get(temp)==null)
+            for (int j=0; j<points.size(); j++)
             {
-                i--;
-                continue;
+                if (j%10==i)
+                {
+                    testPoints.add(points.get(j));
+                }
+                else
+                {
+                    trainingPoints.add(points.get(j));
+                }
             }
-            testPoints.add(points.get(temp));
-            points.set(temp,null);
+
+            for (int j=0; j<testPoints.size(); j++)
+            {
+                Knn knn = new Knn(trainingPoints, testPoints.get(j));
+
+                if (knn.isAccurate())
+                {
+                    if (knn.getResult()==true)
+                    {
+                        truePositive++;
+                    }
+                    else
+                    {
+                        trueNegative++;
+                    }
+                }
+                else
+                {
+                    if (knn.getResult()==true)
+                    {
+                        falsePositive++;
+                    }
+                    else
+                    {
+                        falseNegative++;
+                    }
+                }
+            }
+            trainingPoints.clear();
+            testPoints.clear();
         }
 
-        for(int i=0; i<points.size(); i++)
-        {
-            if(points.get(i)==null)
-                continue;
+        System.out.println("TP          : "+truePositive);
+        System.out.println("TN          : "+trueNegative);
+        System.out.println("FP          : "+falsePositive);
+        System.out.println("FN          : "+falseNegative);
+        System.out.println();
 
-            trainingPoints.add(points.get(i));
-        }
+        calculateAccuracy();
+        calculatePrecision();
+        calculateRecall();
+        calculateFScore();
     }
 
-    public List<DataPoint> getTrainingPoints() {
-        return trainingPoints;
+    public void calculateAccuracy ()
+    {
+        accuracy = ((double)trueNegative+truePositive)/((double)trueNegative+truePositive+falseNegative+falsePositive);
     }
 
-    public List<DataPoint> getTestPoints() {
-        return testPoints;
-    }*/
+    public void calculateRecall ()
+    {
+        recall = (double)truePositive/((double)truePositive+falseNegative);
+    }
+
+    public void calculatePrecision ()
+    {
+        precision = (double)truePositive/((double)truePositive+falsePositive);
+    }
+
+    public void calculateFScore ()
+    {
+        fScore = (2*precision*recall)/(precision+recall);
+    }
+
+    public double getAccuracy() {
+        return accuracy;
+    }
+
+    public double getRecall() {
+        return recall;
+    }
+
+    public double getPrecision() {
+        return precision;
+    }
+
+    public double getfScore() {
+        return fScore;
+    }
 }

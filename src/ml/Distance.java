@@ -19,17 +19,18 @@ public class Distance
 
     private void calcDistance ()
     {
+        //Distance using only selected features
         distance = Math.sqrt(
                 Math.pow(testPoint.getAge()-trainingPoint.getAge(),2)+
-                Math.pow(testPoint.getSex()-trainingPoint.getSex(),2)+
+                //Math.pow(testPoint.getSex()-trainingPoint.getSex(),2)+
                 Math.pow(testPoint.getCp()-trainingPoint.getCp(),2)+
-                Math.pow(testPoint.getTrestbps()-trainingPoint.getTrestbps(),2)+
-                Math.pow(testPoint.getChol()-trainingPoint.getChol(),2)+
-                Math.pow(testPoint.getFbs()-trainingPoint.getFbs(),2)+
+                //Math.pow(testPoint.getTrestbps()-trainingPoint.getTrestbps(),2)+
+                //Math.pow(testPoint.getChol()-trainingPoint.getChol(),2)+
+                //Math.pow(testPoint.getFbs()-trainingPoint.getFbs(),2)+
                 Math.pow(testPoint.getRestecg()-trainingPoint.getRestecg(),2)+
-                Math.pow(testPoint.getThalach()-trainingPoint.getThalach(),2)+
+                //Math.pow(testPoint.getThalach()-trainingPoint.getThalach(),2)+
                 Math.pow(testPoint.getExang()-trainingPoint.getExang(),2)+
-                Math.pow(testPoint.getOldpeak()-trainingPoint.getOldpeak(),2)+
+                //Math.pow(testPoint.getOldpeak()-trainingPoint.getOldpeak(),2)+
                 Math.pow(testPoint.getSlope()-trainingPoint.getSlope(),2)+
                 Math.pow(testPoint.getCa()-trainingPoint.getCa(),2)+
                 Math.pow(testPoint.getThal()-trainingPoint.getThal(),2)
@@ -45,16 +46,4 @@ public class Distance
     public double getNum() {
         return num;
     }
-
-    public static Comparator<Distance> distanceComparator = new Comparator<Distance>() {
-
-        public int compare(Distance d1, Distance d2) {
-            //ascending order
-            if(d1.getDistance()-d2.getDistance()>0)
-                return 1;
-            else
-                return -1;
-            //descending order
-        }
-    };
 }
